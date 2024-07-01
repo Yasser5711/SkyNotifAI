@@ -44,11 +44,24 @@ def evaluate_model(model_path, X_test, y_test, target_scalers, features):
     print(f"Predictions saved to {file_name}")
 
 
+def predict_tomorrow(model, last_sequence, target_scalers):
+    # Make a prediction for tomorrow
+    prediction = model.predict(
+        last_sequence.reshape(1, -1, last_sequence.shape[1]))
+    inv_prediction = np.zeros(prediction.shape)
+
+    for i, target in enumerate(['tavg', 'tmin', 'tmax']):
+        inv_prediction[:, i] = target_scalers[target].inverse_transform(
+            prediction[:, i].reshape(-1, 1)).flatten()
+
+    return inv_prediction[0]
+
+
 if __name__ == "__main__":
     from data_preprocessing import load_and_preprocess_data, create_sequences
 
     # Load and preprocess the data
-    file_path = '../data/weather_data.xlsx'
+    file_path = '../data/export_2023.xlsx'
     data, scaler, target_scalers = load_and_preprocess_data(file_path)
 
     # Parameters
@@ -67,3 +80,13 @@ if __name__ == "__main__":
     # Evaluate the model
     evaluate_model('../model/weather_lstm_model.h5',
                    X_test, y_test, target_scalers, features)
+
+    # Predict the weather for tomorrow
+    last_sequence = X[-1]
+    prediction = predict_tomorrow(model, last_sequence, target_scalers)
+    print(
+        f'The predicted average temperature for tomorrow is: {prediction[0]}')
+    print(
+        f'The predicted minimum temperature for tomorrow is: {prediction[1]}')
+    print(
+        f'The predicted maximum temperature for tomorrow is: {prediction[2]}')
