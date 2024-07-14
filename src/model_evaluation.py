@@ -1,4 +1,4 @@
-# src/model_evaluation.py
+# src\model_evaluation.py
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     from data_preprocessing import load_and_preprocess_data, create_sequences
 
     # Load and preprocess the data
-    file_path = '../data/export_2023.xlsx'
+    file_path = '../data/export.xlsx'
     data, scaler, target_scalers = load_and_preprocess_data(file_path)
 
     # Parameters

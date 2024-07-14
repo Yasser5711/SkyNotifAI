@@ -1,4 +1,4 @@
-# src/model_training.py
+# src\model_training.py
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -36,18 +36,18 @@ def build_and_train_model(X, y, seq_length, num_features, num_outputs, batch_siz
 
 
 if __name__ == "__main__":
-    file_path = '../data/export_2023.xlsx'
+    file_path = '../data/export.xlsx'
     data, scaler, target_scalers = load_and_preprocess_data(file_path)
 
     SEQ_LENGTH = 30
-    features = [col for col in data.columns if col != 'Date']
+    features = [col for col in data.columns if col != 'date']
     num_features = len(features)
     num_outputs = 3  # Number of target variables (tavg, tmin, tmax)
 
     X, y = create_sequences(data, SEQ_LENGTH, features)
 
     model, X_val, y_val, history = build_and_train_model(
-        X, y, SEQ_LENGTH, num_features, num_outputs)
+        X, y, SEQ_LENGTH, num_features, num_outputs, epochs=150, learning_rate=0.0005)
 
     model.save('../model/weather_lstm_model.h5')
     print("Model trained and saved.")

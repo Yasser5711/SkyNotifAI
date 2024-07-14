@@ -59,7 +59,7 @@ def predict_future_temperatures(model, data, start_date, end_date, seq_length, f
 
 def main():
     # Load and preprocess the data
-    file_path = 'data/export_2023.xlsx'
+    file_path = 'data/export2016_2024.xlsx'
     data, scaler, target_scalers = load_and_preprocess_data(file_path)
 
     # Print the range of dates available in the dataset
@@ -76,7 +76,7 @@ def main():
 
     # Build and train the model
     model, X_val, y_val, history = build_and_train_model(
-        X, y, SEQ_LENGTH, num_features, num_outputs, epochs=200, learning_rate=0.0005)
+        X, y, SEQ_LENGTH, num_features, num_outputs, epochs=150, learning_rate=0.0005)
 
     # Save the model
     model_path = 'model/weather_lstm_model.h5'
