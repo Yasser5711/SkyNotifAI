@@ -9,10 +9,9 @@ def load_and_preprocess_data(file_path):
     data = pd.read_excel(file_path)
 
     # Select features to normalize (excluding the date column)
-    features = ['tavg', 'tmin', 'tmax', 'prcp',
-                'wdir', 'wspd', 'wpgt', 'pres']
+    features = ['tavg', 'tmin', 'tmax']
 
-    # Ensure 'Date' is parsed as datetime
+    # Ensure 'date' is parsed as datetime
     data['date'] = pd.to_datetime(data['date'], errors='coerce')
 
     # Remove columns with all NaN values
@@ -36,7 +35,7 @@ def load_and_preprocess_data(file_path):
 
     # Fit separate scalers for target variables
     target_scalers = {}
-    for target in ['tavg', 'tmin', 'tmax']:
+    for target in features:
         target_scalers[target] = MinMaxScaler()
         data_scaled[target] = target_scalers[target].fit_transform(
             data[[target]])
@@ -48,7 +47,7 @@ def create_sequences(data, seq_length, features):
     xs, ys = [], []
     for i in range(len(data) - seq_length):
         x = data.iloc[i:i+seq_length][features].values.astype(np.float32)
-        # Assuming the first 3 features are tavg, tmin, tmax
+        # Only target tavg, tmin, tmax
         y = data.iloc[i+seq_length][features[:3]].values.astype(np.float32)
         xs.append(x)
         ys.append(y)
@@ -57,7 +56,7 @@ def create_sequences(data, seq_length, features):
 
 if __name__ == "__main__":
     file_path = '../data/export.xlsx'
-    data, scaler = load_and_preprocess_data(file_path)
+    data, scaler, target_scalers = load_and_preprocess_data(file_path)
     SEQ_LENGTH = 30
     features = [col for col in data.columns if col != 'date']
     X, y = create_sequences(data, SEQ_LENGTH, features)
