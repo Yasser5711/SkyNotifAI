@@ -34,18 +34,39 @@ def predict_temperature():
         # Parse the date
         prediction_date = datetime.strptime(
             date_str, '%Y-%m-%d').strftime('%Y-%m-%d')
+        today = datetime.now().strftime('%Y-%m-%d')
+
+        # Ensure the entered date is in the future
+        if datetime.strptime(prediction_date, '%Y-%m-%d') <= datetime.strptime(today, '%Y-%m-%d'):
+            return jsonify({'error': 'The date must be in the future.'}), 400
 
         # Predict temperature for the given date
         prediction = predict_temperature_for_date(
             model, data, target_scalers, prediction_date, SEQ_LENGTH, features
         )
 
-        # Return the prediction as JSON
+        # Extract and inverse transform data from today to the entered date
+        historical_data = data[(data['date'] >= pd.to_datetime(today)) &
+                               (data['date'] <= pd.to_datetime(prediction_date))]
+
+        # Inverse transform the scaled historical data to get the real values
+        historical_data_real = historical_data[['tavg', 'tmin', 'tmax']].copy()
+        for feature in ['tavg', 'tmin', 'tmax']:
+            historical_data_real[feature] = target_scalers[feature].inverse_transform(
+                historical_data_real[feature].values.reshape(-1, 1)
+            )
+
+        # Add the date back to the historical data
+        historical_data_real['date'] = historical_data['date'].dt.strftime(
+            '%Y-%m-%d')
+
+        # Return the prediction and historical data as JSON
         return jsonify({
             'date': prediction_date,
             'predicted_avg_temp': round(prediction[0], 2),
             'predicted_min_temp': round(prediction[1], 2),
-            'predicted_max_temp': round(prediction[2], 2)
+            'predicted_max_temp': round(prediction[2], 2),
+            'historical_data': historical_data_real.to_dict(orient='records')
         })
 
     except Exception as e:
