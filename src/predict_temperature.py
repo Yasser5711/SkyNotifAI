@@ -2,8 +2,8 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-from data_preprocessing import load_and_preprocess_data, create_sequences
-from model_evaluation import predict_tomorrow
+from .data_preprocessing import load_and_preprocess_data, create_sequences
+from .model_evaluation import predict_tomorrow
 
 
 def load_model(model_path):
