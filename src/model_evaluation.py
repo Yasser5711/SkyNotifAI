@@ -1,4 +1,3 @@
-# src/model_evaluation.py
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -10,15 +9,11 @@ import os
 def evaluate_model(model_path, X_test, y_test, target_scalers, features):
     # Load the trained model
     model = tf.keras.models.load_model(model_path)
-
-    # Evaluate the model on the test set
     loss = model.evaluate(X_test, y_test)
     print(f'Test Loss: {loss}')
 
-    # Make predictions
     predictions = model.predict(X_test)
 
-    # Inverse transform the predictions and y_test to the original scale
     inv_predictions = np.zeros(predictions.shape)
     inv_y_test = np.zeros(y_test.shape)
 
@@ -28,15 +23,12 @@ def evaluate_model(model_path, X_test, y_test, target_scalers, features):
         inv_y_test[:, i] = target_scalers[target].inverse_transform(
             y_test[:, i].reshape(-1, 1)).flatten()
 
-    # Print the first prediction vs actual
     print(f'Predicted: {inv_predictions[0]}, Actual: {inv_y_test[0]}')
 
-    # Create a DataFrame to save predictions
     results = pd.DataFrame(inv_predictions, columns=[
                            f'Predicted_{feat}' for feat in features[:3]])
     results[['Actual_tavg', 'Actual_tmin', 'Actual_tmax']] = inv_y_test
 
-    # Save the DataFrame to an Excel file
     os.makedirs('predictions', exist_ok=True)
     current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
     file_name = f'predictions/predictions_{current_time}.xlsx'
@@ -61,7 +53,7 @@ if __name__ == "__main__":
     from data_preprocessing import load_and_preprocess_data, create_sequences
 
     # Load and preprocess the data
-    file_path = '../data/export_2023.xlsx'
+    file_path = '../data/export.xlsx'
     data, scaler, target_scalers = load_and_preprocess_data(file_path)
 
     # Parameters
