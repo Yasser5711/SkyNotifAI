@@ -27,8 +27,8 @@ project_directory/
 ### 1. Clone the Repository
 
 ```bash
-git clone  https://github.com/Yasser5711/SkyNotifAI.git
-cd IA
+git clone https://github.com/Yasser5711/SkyNotifAI.git
+cd SkyNotifAI
 ```
 
 ### 2. Install Dependencies
