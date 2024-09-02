@@ -27,8 +27,8 @@ project_directory/
 ### 1. Clone the Repository
 
 ```bash
-git clone -b neural_networks https://github.com/Epitech-PMSC-ren7/IA.git
-cd IA
+git clone https://github.com/Yasser5711/SkyNotifAI.git
+cd SkyNotifAI
 ```
 
 ### 2. Install Dependencies
